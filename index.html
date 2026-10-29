@@ -3,433 +3,284 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Laboratorio de prompts</title>
+<title>Comité de IA</title>
 <style>
-  :root{
-    --navy:#0B1F3A; --navy2:#13315C; --ice:#EEF4FA; --line:#D6E2EF; --cyan:#00B8D9; --cyan2:#7FE3F2;
-    --green:#2BB673; --amber:#F5A623; --red:#E5484D; --slate:#5B6B82; --white:#fff; --ink:#0B1F3A;
-  }
+  :root{--navy:#0B1F3A;--navy2:#13315C;--ice:#EEF4FA;--line:#D6E2EF;--cyan:#00B8D9;--cyan2:#7FE3F2;--green:#2BB673;--amber:#F5A623;--red:#E5484D;--slate:#5B6B82}
   *{box-sizing:border-box}
-  body{margin:0;font-family:"Segoe UI",Calibri,system-ui,-apple-system,Roboto,sans-serif;background:var(--ice);color:var(--ink);font-size:16px;line-height:1.45}
+  body{margin:0;font-family:"Segoe UI",Calibri,system-ui,-apple-system,Roboto,sans-serif;background:var(--ice);color:var(--navy);font-size:16px;line-height:1.45}
   header{background:var(--navy);color:#fff;padding:14px 20px;display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
-  header h1{margin:0;font-size:22px}
-  header h1 small{display:block;font-size:13px;font-weight:400;color:var(--cyan2)}
+  header h1{margin:0;font-size:22px} header h1 small{display:block;font-size:13px;font-weight:400;color:var(--cyan2)}
   .btns{display:flex;flex-wrap:wrap;gap:8px}
   button{font:inherit;cursor:pointer;border-radius:10px;border:0;padding:9px 14px;font-weight:600}
-  .hbtn{background:var(--navy2);color:#fff;border:1px solid #2A4C7C}
-  .hbtn:hover{background:#1C4378}
+  .hbtn{background:var(--navy2);color:#fff;border:1px solid #2A4C7C} .hbtn:hover{background:#1C4378}
   .hbtn.primary{background:var(--cyan);color:var(--navy);border-color:var(--cyan)}
-  main{display:grid;grid-template-columns:1fr 300px;gap:18px;padding:18px 20px;max-width:1400px;margin:0 auto}
+  main{display:grid;grid-template-columns:1fr 310px;gap:18px;padding:18px 20px;max-width:1400px;margin:0 auto}
   @media (max-width:900px){main{grid-template-columns:1fr}}
   .banner{grid-column:1/-1;background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 16px;display:flex;align-items:center;gap:12px}
   .banner .dot{width:12px;height:12px;border-radius:50%;background:var(--cyan);flex:none}
   .board{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;align-content:start}
-  @media (max-width:1100px){.board{grid-template-columns:repeat(2,1fr)}}
-  @media (max-width:560px){.board{grid-template-columns:1fr}}
-  .card{background:var(--navy);color:#fff;border-radius:14px;padding:18px;min-height:190px;text-align:left;display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 2px 8px rgba(11,31,58,.15);transition:transform .12s}
-  .card:hover{transform:translateY(-3px);box-shadow:0 6px 16px rgba(11,31,58,.25)}
-  .card .top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
-  .card .num{font-size:34px;font-weight:800;color:var(--cyan);line-height:1}
-  .card .time{font-size:13px;font-weight:700;background:var(--navy2);border-radius:999px;padding:3px 10px;color:var(--cyan2)}
-  .card .tt{font-size:18px;font-weight:700;margin-top:10px}
-  .card .pt{font-size:13px;color:var(--cyan2);margin-top:2px}
-  .card .stats{margin-top:10px;font-size:13px;color:#C9D6E6}
+  @media (max-width:1100px){.board{grid-template-columns:repeat(3,1fr)}} @media (max-width:600px){.board{grid-template-columns:repeat(2,1fr)}}
+  .card{background:var(--navy);color:#fff;border-radius:14px;padding:16px;min-height:150px;text-align:left;display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 2px 8px rgba(11,31,58,.15);transition:transform .12s}
+  .card:hover:not(.played){transform:translateY(-3px)}
+  .card .top{display:flex;justify-content:space-between;align-items:flex-start}
+  .card .num{font-size:30px;font-weight:800;color:var(--cyan);line-height:1}
+  .card .hrs{max-width:65%;text-align:right;font-size:12px;font-weight:700;background:var(--navy2);border-radius:999px;padding:3px 10px;color:var(--cyan2)}
+  .card .tt{font-size:16px;font-weight:600;margin-top:10px}
+  .card.played{background:#fff;color:var(--slate);border:1px solid var(--line)}
+  .card.played .num{color:#B8C6D8} .card.played .hrs{background:var(--ice);color:var(--slate)}
+  .badge{display:inline-block;font-size:12px;font-weight:700;padding:3px 9px;border-radius:999px;color:#fff}
+  .b-verde{background:var(--green)} .b-ambar{background:var(--amber);color:var(--navy)} .b-rojo{background:var(--red)}
   aside{display:flex;flex-direction:column;gap:14px}
   .panel{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px}
   .panel h2{margin:0 0 10px;font-size:16px;text-transform:uppercase;letter-spacing:.6px;color:var(--slate)}
-  .player{display:flex;justify-content:space-between;align-items:center;padding:8px 10px;border-radius:10px;margin-bottom:6px;background:var(--ice)}
-  .player.turn{background:var(--cyan);font-weight:700}
+  .player{padding:8px 10px;border-radius:10px;margin-bottom:6px;background:var(--ice)}
+  .player .row1{display:flex;justify-content:space-between;align-items:center}
   .player .pts{font-weight:800;font-size:18px}
+  .player .row2{font-size:13px;color:var(--slate)}
+  .player.turn{background:var(--cyan);font-weight:700} .player.turn .row2{color:var(--navy)}
   .muted{color:var(--slate);font-size:14px}
-  .pieces6{display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:14px}
-  .pieces6 span{background:var(--ice);border-radius:8px;padding:5px 8px}
-  /* modal */
+  .legend div{margin:8px 0;font-size:14px;padding-left:22px;position:relative}
+  .legend .sw{position:absolute;left:0;top:3px;width:14px;height:14px;border-radius:50%}
   .ov{position:fixed;inset:0;background:rgba(11,31,58,.6);display:none;align-items:flex-start;justify-content:center;padding:24px 12px;overflow:auto;z-index:10}
   .ov.open{display:flex}
-  .modal{background:#fff;border-radius:16px;max-width:980px;width:100%;padding:22px 24px;box-shadow:0 20px 50px rgba(0,0,0,.3)}
+  .modal{background:#fff;border-radius:16px;max-width:860px;width:100%;padding:22px 24px;box-shadow:0 20px 50px rgba(0,0,0,.3)}
   .modal h3{margin:0 0 4px;font-size:22px}
   .mhead{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:12px}
   .x{background:var(--ice);color:var(--navy);padding:6px 12px}
   .turnlbl{font-size:14px;color:var(--slate)}
-  .box{border-radius:12px;padding:12px 14px;margin:10px 0}
-  .ask{background:var(--ice)}
-  .lbl{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px;color:var(--slate)}
-  .lab{display:grid;grid-template-columns:1.4fr 1fr;gap:16px;margin-top:6px}
-  @media (max-width:800px){.lab{grid-template-columns:1fr}}
-  .tabs{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-bottom:8px}
-  .tabs button{border-radius:0;background:#fff;color:var(--navy)}
-  .tabs button.on{background:var(--navy);color:#fff}
-  textarea{font:inherit;font-size:15px;width:100%;border:1px solid #B8C6D8;border-radius:10px;padding:10px 12px;resize:vertical}
-  textarea:disabled{background:#F6F9FC;color:#33475F}
-  .field{margin-bottom:8px}
-  .field label{display:block;font-size:13px;font-weight:700;margin-bottom:3px}
-  .field label i{font-weight:400;color:var(--slate);font-style:normal}
-  .meter{background:var(--navy);color:#fff;border-radius:12px;padding:14px 16px}
-  .meter .lbl{color:var(--cyan2)}
-  .ind{display:flex;align-items:center;gap:8px;margin:5px 0;font-size:14px}
-  .ind .led{width:14px;height:14px;border-radius:50%;background:#2A4C7C;flex:none;border:2px solid #3B5E8E}
-  .ind.on .led{background:var(--cyan);border-color:var(--cyan)}
-  .ind.on.req .led{background:var(--green);border-color:var(--green)}
-  .ind span.t{color:#C9D6E6}
-  .ind.on span.t{color:#fff;font-weight:600}
-  .big{font-size:40px;font-weight:800;color:var(--cyan);line-height:1}
-  .lvl{font-size:14px;font-weight:700;margin-top:4px}
-  .sep{height:1px;background:#2A4C7C;margin:10px 0}
+  .box{border-radius:12px;padding:12px 14px;margin:10px 0;background:var(--ice)}
+  .lbl{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px;color:var(--slate)}
+  .qs{display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:14px} @media (max-width:600px){.qs{grid-template-columns:1fr}}
+  .qs div{background:#fff;border:1px solid var(--line);border-radius:10px;padding:8px 10px}
+  .verdicts{display:grid;grid-template-columns:repeat(3,1fr);gap:10px} @media (max-width:560px){.verdicts{grid-template-columns:1fr}}
+  .vbtn{padding:12px;color:#fff;font-size:16px;text-align:left} .vbtn small{display:block;font-weight:400;font-size:13px}
+  .vbtn.verde{background:var(--green)} .vbtn.ambar{background:var(--amber);color:var(--navy)} .vbtn.rojo{background:var(--red)}
+  .vbtn.sel{outline:4px solid var(--navy);outline-offset:2px}
+  .vbtn:disabled{opacity:.45;cursor:default} .vbtn.sel:disabled{opacity:1}
   .actions{display:flex;justify-content:flex-end;gap:10px;margin-top:16px;flex-wrap:wrap}
-  .go{background:var(--cyan);color:var(--navy)}
-  .go:disabled{opacity:.5;cursor:default}
-  .ghost{background:var(--ice);color:var(--navy)}
-  .votes{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-  @media (max-width:700px){.votes{grid-template-columns:1fr 1fr}}
-  .vote{padding:12px;color:#fff;font-size:15px}
-  .v3{background:var(--green)} .v2{background:#7CC576;color:var(--navy)} .v1{background:var(--amber);color:var(--navy)} .v0{background:var(--red)}
-  .vote.sel{outline:4px solid var(--navy);outline-offset:2px}
-  .vote:disabled{opacity:.45;cursor:default} .vote.sel:disabled{opacity:1}
-  .result{border-radius:12px;padding:14px 16px;margin-top:14px;border:2px solid var(--green);background:#EAF8F1}
-  .result h4{margin:0 0 6px;font-size:18px}
-  .timer{font-variant-numeric:tabular-nums;font-weight:800;font-size:20px;background:var(--ice);border-radius:10px;padding:4px 12px}
-  .timer.low{background:var(--red);color:#fff}
-  .form-row{margin:12px 0}
-  .form-row label{display:block;font-weight:600;margin-bottom:6px}
+  .go{background:var(--cyan);color:var(--navy)} .go:disabled{opacity:.5;cursor:default} .ghost{background:var(--ice);color:var(--navy)}
+  .reveal{border-radius:12px;padding:14px 16px;margin-top:14px;border:2px solid var(--line)}
+  .reveal.ok{border-color:var(--green);background:#EAF8F1} .reveal.part{border-color:var(--amber);background:#FFF6E6} .reveal.no{border-color:var(--red);background:#FDECEC}
+  .reveal h4{margin:0 0 6px;font-size:18px}
+  .timer{font-variant-numeric:tabular-nums;font-weight:800;font-size:20px;background:var(--ice);border-radius:10px;padding:4px 12px} .timer.low{background:var(--red);color:#fff}
+  .form-row{margin:12px 0} .form-row label{display:block;font-weight:600;margin-bottom:6px}
   .seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;flex-wrap:wrap}
-  .seg button{border-radius:0;background:#fff;color:var(--navy);font-weight:600}
-  .seg button.on{background:var(--navy);color:#fff}
+  .seg button{border-radius:0;background:#fff;color:var(--navy);font-weight:600} .seg button.on{background:var(--navy);color:#fff}
   input[type=text]{font:inherit;padding:9px 12px;border:1px solid #B8C6D8;border-radius:10px;width:100%}
-  .addrow{display:flex;gap:8px}
-  .addrow button{flex:none}
+  .addrow{display:flex;gap:8px} .addrow button{flex:none}
   .plist{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
   .ptag{background:var(--ice);border-radius:999px;padding:5px 6px 5px 12px;display:flex;gap:6px;align-items:center;font-weight:600}
   .ptag button{background:#fff;color:var(--red);padding:0 8px;border-radius:999px}
-  .log{width:100%;border-collapse:collapse;font-size:14px}
-  .log th,.log td{border-bottom:1px solid var(--line);padding:8px 6px;text-align:left;vertical-align:top}
-  .rules h4{margin:16px 0 6px}
-  .rules ul{margin:6px 0;padding-left:20px}
+  .log{width:100%;border-collapse:collapse;font-size:14px} .log th,.log td{border-bottom:1px solid var(--line);padding:8px 6px;text-align:left;vertical-align:top}
+  .rules h4{margin:16px 0 6px} .rules ul{margin:6px 0;padding-left:20px}
   .podium{display:flex;flex-direction:column;gap:8px;margin-top:10px}
-  .podium div{display:flex;justify-content:space-between;padding:10px 14px;border-radius:10px;background:var(--ice);font-size:18px}
+  .podium div{display:flex;justify-content:space-between;gap:10px;padding:10px 14px;border-radius:10px;background:var(--ice);font-size:17px}
   .podium div:first-child{background:var(--cyan);font-weight:800}
-  .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:10px 16px;border-radius:10px;display:none;z-index:20}
+  .meter{display:flex;gap:10px;margin-top:6px} .meter div{flex:1;background:var(--ice);border-radius:10px;padding:8px 10px}
+  .meter b{display:block;font-size:22px}
 </style>
 </head>
 <body>
 <header>
-  <h1>Laboratorio de prompts<small>IA para la Productividad · Sesión 2 · Martes en Nexo Austral</small></h1>
+  <h1>Comité de IA<small>IA para la Productividad · Sesión 4 · Las reglas de IA del equipo de Nexo Austral</small></h1>
   <div class="btns">
     <button class="hbtn" id="bRules">Reglas</button>
     <button class="hbtn" id="bLog">Bitácora</button>
+    <button class="hbtn" id="bGuide">Guía del equipo</button>
     <button class="hbtn primary" id="bNew">Nueva partida</button>
     <button class="hbtn" id="bEnd">Terminar partida</button>
   </div>
 </header>
-
 <main>
   <div class="banner"><span class="dot"></span><span id="bannerTxt"></span></div>
-  <section class="board" id="board" aria-label="Retos del martes"></section>
+  <section class="board" id="board" aria-label="Situaciones"></section>
   <aside>
-    <div class="panel">
-      <h2 id="scoreTitle">Marcador</h2>
-      <div id="score"></div>
-    </div>
-    <div class="panel">
-      <h2>Las 6 piezas</h2>
-      <div class="pieces6"><span>1. Contexto</span><span>2. Objetivo</span><span>3. Insumos</span><span>4. Restricciones</span><span>5. Formato</span><span>6. Criterios</span></div>
-      <p class="muted" style="margin:10px 0 0">Puntaje por reto: piezas (0–6) + requisitos del reto (0–3) + calidad del resultado votada por el grupo (0–3). Máximo: 12.</p>
+    <div class="panel"><h2 id="scoreTitle">Marcador</h2><div id="score"></div></div>
+    <div class="panel legend">
+      <h2>Decisiones</h2>
+      <div><span class="sw" style="background:var(--green)"></span><b>Permitido:</b> se puede hacer con las herramientas autorizadas</div>
+      <div><span class="sw" style="background:var(--amber)"></span><b>Con condiciones:</b> se puede, si se cumplen ciertas reglas</div>
+      <div><span class="sw" style="background:var(--red)"></span><b>No permitido:</b> no se hace en el equipo</div>
+      <p class="muted" style="margin:10px 0 0">3 puntos si coincide con la recomendación · 1 si elige la opción vecina · 0 si elige la opuesta.</p>
     </div>
   </aside>
 </main>
-
 <div class="ov" id="ovCard" role="dialog" aria-modal="true"><div class="modal" id="cardModal"></div></div>
 <div class="ov" id="ovGen" role="dialog" aria-modal="true"><div class="modal" id="genModal"></div></div>
-<div class="toast" id="toast"></div>
-
 <script>
-const PIECES = [
-  {k:"contexto", n:"Contexto", hint:"Quién soy, la empresa, la situación", re:/\b(soy|somos|trabajo en|trabajamos|nuestra empresa|nexo austral|gerente|contexto|situacion|actua como|eres un)\b/},
-  {k:"objetivo", n:"Objetivo", hint:"Qué necesito y para qué", re:/\b(necesito|objetivo|quiero|proposito|para que|con el fin|redacta|resume|resumir|extrae|extraer|crea|genera|prepara|adapta|convierte|elabora|escribe|disena)\b/},
-  {k:"insumos", n:"Insumos", hint:"La información que debe usar", re:/\b(adjunt\w*|a continuacion|usa (solo|unicamente)|con base en|basandote|basado en|tabla|transcripcion|informe|documento|datos|insumo\w*|notas|comunicado|correo de)\b/},
-  {k:"restricciones", n:"Restricciones", hint:"Límites, tono, lo que no debe hacer", re:/\b(no (inventes|prometas|uses|incluyas|agregues|menciones|conviertas|supongas|cambies|garantices)|evita\w*|sin (inventar|prometer|logos?|marcas?|texto)|maximo|limite|solo lo|unicamente lo|no debe)\b/},
-  {k:"formato", n:"Formato", hint:"Cómo quiero el resultado", re:/\b(formato|tabla|vinetas|lista|parrafos?|palabras|lineas|laminas|diapositivas|asunto|columnas|estructura|titulos?|proporcion|horizontal|vertical|16:9|1:1)\b/},
-  {k:"criterios", n:"Criterios", hint:"Cómo sabré que está bien", re:/\b(criterio\w*|que se entienda|se entienda|que (un|el|la|cualquier) \w+ (pueda|entienda|lea)|claro|claridad|en \d+ (minutos|segundos)|verifica\w*|revisa|asegurate|calidad|listo para|profesional)\b/},
+const LV = {verde:{n:"Permitido",i:0}, ambar:{n:"Con condiciones",i:1}, rojo:{n:"No permitido",i:2}};
+const CATS = ["Herramientas autorizadas","Semáforo de datos","Validación humana","Transparencia","Registro de asistentes y agentes","Responsabilidad"];
+const SIT = [
+ {t:"Resumir el contrato de un cliente con un asistente personal gratuito", ctx:"Un gerente quiere ahorrar tiempo y sube el contrato de un cliente a su cuenta personal gratuita de un chatbot.", v:"rojo", cat:1,
+  exp:"Un contrato con un cliente es información confidencial. Las cuentas personales gratuitas pueden usar los datos según su configuración y no tienen los controles de la empresa.",
+  rule:"Los contratos y documentos de clientes solo se analizan en herramientas corporativas autorizadas."},
+ {t:"Redactar borradores de correos internos con el asistente corporativo", ctx:"El equipo usa el asistente que la empresa autorizó para preparar borradores de correos internos.", v:"verde", cat:0,
+  exp:"Es un uso de bajo riesgo en una herramienta autorizada. La responsabilidad sigue siendo de quien envía el correo.",
+  rule:"Los borradores de comunicaciones internas se pueden hacer con el asistente corporativo; quien envía revisa y firma."},
+ {t:"Generar imágenes realistas de personas para una campaña", ctx:"Marketing quiere publicar en redes sociales imágenes de personas generadas con IA que parecen fotografías reales.", v:"ambar", cat:3,
+  exp:"Es posible, pero las imágenes realistas pueden confundir al público y tener problemas de derechos. Requiere declararlo y una aprobación.",
+  rule:"Las imágenes realistas de personas generadas con IA se declaran como tales, se revisan sus derechos y las aprueba Marketing."},
+ {t:"Analizar la planilla de salarios del equipo con IA", ctx:"Recursos Humanos quiere detectar brechas salariales subiendo la planilla de remuneraciones a un asistente de IA.", v:"ambar", cat:1,
+  exp:"El análisis puede ser valioso, pero son datos personales sensibles. Solo con la herramienta aprobada, por el área responsable y con datos anonimizados.",
+  rule:"Los datos de remuneraciones solo los analiza Recursos Humanos, en herramientas corporativas aprobadas y con datos anonimizados."},
+ {t:"Un agente responde los reclamos de clientes sin revisión", ctx:"Para responder más rápido, se propone que un agente envíe directamente las respuestas a los reclamos.", v:"rojo", cat:2,
+  exp:"Un error llega directo al cliente y puede comprometer a la empresa. Como vio en el laboratorio de reclamos, los flujos también fallan en escalamientos.",
+  rule:"Ningún agente envía respuestas a clientes sin revisión humana; el agente clasifica y redacta, una persona envía."},
+ {t:"Transcribir con IA las reuniones con clientes", ctx:"El equipo comercial quiere transcribir y resumir automáticamente las reuniones con clientes.", v:"ambar", cat:1,
+  exp:"Ahorra mucho tiempo, pero la transcripción contiene opiniones y datos personales. Requiere avisar y obtener el consentimiento de los participantes.",
+  rule:"Antes de grabar o transcribir una reunión se avisa y se pide consentimiento; la transcripción se trata como información interna."},
+ {t:"Usar IA para decidir la evaluación de desempeño de un colaborador", ctx:"Un jefe propone que la IA califique a su equipo a partir de sus correos y entregables.", v:"rojo", cat:5,
+  exp:"Las decisiones sobre personas requieren juicio, contexto y responsabilidad. Delegarlas genera riesgos de sesgo y de confianza.",
+  rule:"Las decisiones sobre personas las toma una persona. La IA puede ayudar a ordenar notas propias, pero no evalúa ni califica."},
+ {t:"Compartir con el equipo un asistente con los procedimientos internos", ctx:"Un gerente creó un asistente con las guías y procedimientos del área y quiere compartirlo con su equipo.", v:"verde", cat:4,
+  exp:"Es el objetivo del curso: multiplicar lo que funciona. Debe compartirse en una herramienta corporativa y tener un dueño que actualice su conocimiento.",
+  rule:"Los asistentes del equipo se comparten en herramientas corporativas, con un dueño que mantiene su conocimiento vigente."},
+ {t:"Presentar al directorio un análisis hecho con IA sin mencionarlo", ctx:"Un análisis de mercado preparado con IA se presenta al directorio como si fuera un trabajo totalmente manual.", v:"ambar", cat:3,
+  exp:"Usar IA para el análisis está bien; ocultarlo no. El directorio debe saber cómo se obtuvieron las cifras para valorar su confiabilidad.",
+  rule:"Los análisis para el directorio indican el apoyo de IA y sus cifras clave se verifican antes de presentarse."},
+ {t:"Pegar macros o código interno en un chatbot público", ctx:"Un analista pega las macros de los reportes financieros en un chatbot público para corregir un error.", v:"rojo", cat:0,
+  exp:"El código interno puede revelar lógica de negocio, credenciales o estructuras de datos. Solo en herramientas autorizadas.",
+  rule:"El código, las macros y las consultas internas no se comparten con herramientas públicas."},
+ {t:"Traducir con IA un comunicado interno para el equipo de Argentina", ctx:"Se adapta un comunicado interno de Santiago para el equipo de Buenos Aires.", v:"verde", cat:2,
+  exp:"Es un uso de bajo riesgo con información interna no sensible. Quien lo envía revisa el resultado.",
+  rule:"Las traducciones y adaptaciones de comunicados internos se pueden hacer con IA; quien las envía las revisa."},
+ {t:"Un agente programado monitorea precios públicos de la competencia", ctx:"Un agente revisa cada lunes las noticias y los precios publicados por la competencia y envía un resumen.", v:"verde", cat:4,
+  exp:"Usa información pública y no toma decisiones. Debe estar registrado, con un dueño, y respetar los términos de uso de las fuentes.",
+  rule:"Los agentes que monitorean información pública se registran con su dueño y respetan los términos de uso de las fuentes."},
 ];
-
-const RETOS = [
- {t:"El correo difícil", time:"8:30", pattern:"Redactar",
-  sit:"Laura Paredes, Gerente de Compras de Supermercados del Valle, reclama por tres quiebres de stock en septiembre y advierte que podría mover el 30% de su volumen a otro proveedor. Escriba el prompt para que la IA redacte su respuesta de hoy.",
-  req:[["Define el tono", /\b(tono|empatic\w*|formal|cordial|firme|cercano|respetuos\w*)\b/],
-       ["Limita lo que se promete", /\b(promet\w*|garantiz\w*|compromis\w*)\b/],
-       ["Fija la extensión", /\b(\d+\s*(palabras|lineas|parrafos)|breve|corto|maximo)\b/]]},
- {t:"La minuta que nadie escribe", time:"10:00", pattern:"Extraer",
-  sit:"Tiene la transcripción de 45 minutos de la reunión con TransRuta. Escriba el prompt para obtener la minuta con los acuerdos de la reunión.",
-  req:[["Pide responsables y fechas", /(responsable|quien)[\s\S]*(fecha|plazo|cuando)|(fecha|plazo|cuando)[\s\S]*(responsable|quien)/],
-       ["Distingue confirmado de pendiente", /\b(pendiente\w*|confirmad\w*|estado|sin definir|sin acuerdo)\b/],
-       ["Prohíbe inventar acuerdos", /\b(no (inventes|conviertas|agregues|supongas|asumas)|solo (los )?acuerdos|solo lo (dicho|acordado)|explicit\w*)\b/]]},
- {t:"El informe de 40 páginas", time:"12:00", pattern:"Resumir",
-  sit:"TransRuta envió su informe trimestral de 40 páginas. Escriba el prompt para obtener un resumen ejecutivo que le sirva para la decisión del miércoles.",
-  req:[["Fija extensión o nivel ejecutivo", /\b(\d+\s*(palabras|lineas|vinetas|puntos|parrafos)|una pagina|ejecutiv\w*|breve)\b/],
-       ["Pide riesgos o hallazgos", /\b(riesgo\w*|hallazgo\w*|alerta\w*|implicancia\w*|contradic\w*)\b/],
-       ["Exige trazabilidad", /\b(pagina\w*|seccion\w*|cita\w*|fuente|referencia\w*)\b/]]},
- {t:"La presentación del comité", time:"16:00", pattern:"Transformar",
-  sit:"El jueves presenta ante el directorio la situación de Mendoza. Escriba el prompt para que la IA proponga el guion de la presentación.",
-  req:[["Define la audiencia", /\b(comite|directorio|director\w*|audiencia|gerencia general|ejecutiv\w*)\b/],
-       ["Fija el número de láminas", /\b\d+\s*(laminas|diapositivas|slides)\b|\b(dos|tres|cuatro|cinco|seis) (laminas|diapositivas|slides)\b/],
-       ["Pide títulos de acción o narrativa", /\b(titulos? de accion|titulos? que|conclusion\w*|narrativa|situacion|complicacion|resolucion|mensaje (clave|principal))\b/]]},
- {t:"Un mensaje, dos países", time:"17:00", pattern:"Adaptar",
-  sit:"Debe comunicar el plan de mejora logística a los equipos de Santiago y de Buenos Aires. Escriba el prompt para adaptar un mismo comunicado interno a cada país.",
-  req:[["Nombra ambos países", /chile[\s\S]*argentin|argentin[\s\S]*chile|santiago[\s\S]*buenos aires|buenos aires[\s\S]*santiago/],
-       ["Pide adaptar expresiones locales", /\b(local\w*|modismo\w*|expresion\w*|voseo|regional\w*|cultura\w*|giros?)\b/],
-       ["Pide conservar el contenido", /\b(manten\w*|conserva\w*|mismo (contenido|mensaje)|sin cambiar|no cambies|no modifiques|igual)\b/]]},
- {t:"La imagen para la intranet", time:"17:30", pattern:"Crear imagen",
-  sit:"Necesita una imagen para anunciar en la intranet el plan de mejora logística. Escriba el prompt para la herramienta de generación de imágenes.",
-  req:[["Define el estilo visual", /\b(estilo|ilustracion|fotorrealista|flat|plano|minimalista|colores|paleta|acuarela|vectorial|isometric\w*)\b/],
-       ["Excluye logos, marcas o personas reales", /\b(sin|no (incluyas|uses|muestres)|evita\w*)\b[\s\w,]{0,30}\b(logos?|marcas?|personas reales|rostros|texto)\b/],
-       ["Indica formato o proporción", /\b(16:9|4:3|1:1|3:2|horizontal|vertical|cuadrad\w*|banner|proporcion|formato|pixeles|px)\b/]]},
-];
-const VOTES = [[3,"Lista para enviar"],[2,"Ajustes menores"],[1,"Muchos ajustes"],[0,"No sirve"]];
-
-let S = freshState();
-function freshState(){ return {players:[], mode:"individual", turn:0, stats:{}, log:[], timer:180, active:false, ended:false}; }
-let cur = null, tInt = null, tLeft = 0;
-
-const $ = id => document.getElementById(id);
-const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const norm = s => s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");
-function toast(m){ const t=$("toast"); t.textContent=m; t.style.display="block"; setTimeout(()=>t.style.display="none",1800); }
-
+let S=freshState();
+function freshState(){ return {players:[], mode:"individual", turn:0, played:{}, log:[], timer:90, active:false, ended:false}; }
+let cur=null,tInt=null,tLeft=0;
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function score(ch,rec){ const d=Math.abs(LV[ch].i-LV[rec].i); return d===0?3:d===1?1:0; }
 function render(){
-  const b = $("board"); b.innerHTML = "";
-  RETOS.forEach((r,i)=>{
-    const st = S.stats[i];
-    const el = document.createElement("button");
-    el.className = "card";
-    el.innerHTML = `<div class="top"><div class="num">${i+1}</div><span class="time">${r.time}</span></div>
-      <div><div class="tt">${r.t}</div><div class="pt">Patrón: ${r.pattern}</div>
-      <div class="stats">${st ? `Jugado ${st.n} ${st.n===1?"vez":"veces"} · mejor puntaje: ${st.best}/12 (${esc(st.bestBy)})` : "Aún sin jugar"}</div></div>`;
-    el.onclick = () => openReto(i);
-    b.appendChild(el);
-  });
-  const sc = $("score");
-  $("scoreTitle").textContent = S.mode === "equipos" ? "Marcador · equipos" : "Marcador";
-  if(!S.players.length) sc.innerHTML = `<p class="muted" style="margin:0">Sin jugadores registrados. Pulse <b>Nueva partida</b> para comenzar. También puede abrir cualquier reto en modo práctica (sin puntaje).</p>`;
-  else sc.innerHTML = S.players.map((p,i)=>`<div class="player ${S.active && i===S.turn ? "turn":""}"><span>${esc(p.name)}</span><span class="pts">${p.pts}</span></div>`).join("");
-  let msg;
-  if(S.ended) msg = "Partida terminada. Revise la bitácora o pulse Nueva partida.";
-  else if(!S.active) msg = "Pulse <b>Nueva partida</b> para registrar a los jugadores o equipos.";
-  else msg = `Turno de <b>${esc(S.players[S.turn].name)}</b>: elija un reto. · Jugadas: ${S.log.length}`;
-  $("bannerTxt").innerHTML = msg;
+  const b=$("board"); b.innerHTML="";
+  SIT.forEach((t,i)=>{ const p=S.played[i]; const el=document.createElement("button"); el.className="card"+(p?" played":"");
+    el.innerHTML=`<div class="top"><div class="num">${i+1}</div><span class="hrs">${CATS[t.cat]}</span></div><div><div class="tt">${t.t}</div>${p?`<div style="margin-top:8px"><span class="badge b-${p.choice}">${LV[p.choice].n}</span> <span class="muted">· ${esc(p.player)} · +${p.pts}</span></div>`:""}</div>`;
+    el.onclick=()=>openCard(i); b.appendChild(el); });
+  const sc=$("score"); $("scoreTitle").textContent=S.mode==="equipos"?"Marcador · equipos":"Marcador";
+  if(!S.players.length) sc.innerHTML=`<p class="muted" style="margin:0">Sin jugadores registrados. Pulse <b>Nueva partida</b> para comenzar. También puede abrir cualquier situación en modo práctica (sin puntaje).</p>`;
+  else sc.innerHTML=S.players.map((p,i)=>`<div class="player ${S.active&&i===S.turn?"turn":""}"><div class="row1"><span>${esc(p.name)}</span><span class="pts">${p.pts}</span></div></div>`).join("");
+  const n=Object.keys(S.played).length; let msg;
+  if(S.ended) msg="Partida terminada. Abra la <b>Guía del equipo</b> para ver las reglas que decidieron.";
+  else if(!S.active) msg="Pulse <b>Nueva partida</b> para registrar a los jugadores o equipos.";
+  else msg=`Turno de <b>${esc(S.players[S.turn].name)}</b>: elija una situación. · Situaciones decididas: ${n} de ${SIT.length}`;
+  $("bannerTxt").innerHTML=msg;
 }
-
-// ---------- Reto ----------
-function openReto(i){
-  const r = RETOS[i];
-  const practice = !S.active;
-  cur = {i, practice, mode:"pegar", fields:{}, text:"", locked:false, vote:null};
-  const who = practice ? "<b>Modo práctica</b> · sin puntaje" : `Turno de <b>${esc(S.players[S.turn].name)}</b>`;
-  $("cardModal").innerHTML = `
-    <div class="mhead"><div><div class="turnlbl">Reto ${i+1} · ${r.time} · Patrón: ${r.pattern} · ${who}</div><h3>${r.t}</h3></div>
-      <div style="display:flex;gap:8px;align-items:center">${S.timer ? `<span class="timer" id="tm"></span>` : ""}<button class="x" id="xCard">Cerrar</button></div></div>
-    <div class="box ask"><div class="lbl">La situación</div>${r.sit}</div>
-    <div class="lab">
-      <div>
-        <div class="tabs"><button id="tPaste" class="on">Pegar prompt</button><button id="tBuild">Constructor de 6 piezas</button></div>
-        <div id="editor"></div>
-      </div>
-      <div class="meter">
-        <div class="lbl">Piezas detectadas</div>
-        <div id="ledP"></div>
-        <div class="sep"></div>
-        <div class="lbl">Requisitos del reto</div>
-        <div id="ledR"></div>
-        <div class="sep"></div>
-        <div style="display:flex;align-items:flex-end;gap:12px"><div class="big" id="pScore">0</div><div><div class="muted" style="color:#C9D6E6">de 9 puntos del prompt</div><div class="lvl" id="lvl"></div></div></div>
-      </div>
-    </div>
-    <div id="voteStep"></div>
-    <div class="actions" id="acts"></div>`;
-  $("xCard").onclick = closeCard;
-  $("tPaste").onclick = ()=> setMode("pegar");
-  $("tBuild").onclick = ()=> setMode("constructor");
-  drawEditor(); analyze(); drawActs();
+function openCard(i){
+  const t=SIT[i], played=S.played[i], practice=!S.active; cur={i,choice:null,practice};
+  const who=played?`Decidida por <b>${esc(played.player)}</b>`:practice?"<b>Modo práctica</b> · sin puntaje":`Turno de <b>${esc(S.players[S.turn].name)}</b>`;
+  $("cardModal").innerHTML=`<div class="mhead"><div><div class="turnlbl">Situación ${i+1} · ${CATS[t.cat]} · ${who}</div><h3>${t.t}</h3></div>
+   <div style="display:flex;gap:8px;align-items:center">${(!played&&S.timer)?'<span class="timer" id="tm"></span>':""}<button class="x" id="xCard">Cerrar</button></div></div>
+   <div class="box"><div class="lbl">La situación</div>${t.ctx}</div>
+   <div class="lbl" style="margin-top:12px">¿Qué decide el comité?</div>
+   <div class="verdicts"><button class="vbtn verde" data-v="verde">Permitido<small>Se puede con las herramientas autorizadas</small></button><button class="vbtn ambar" data-v="ambar">Con condiciones<small>Se puede, si se cumplen ciertas reglas</small></button><button class="vbtn rojo" data-v="rojo">No permitido<small>No se hace en el equipo</small></button></div>
+   <div id="reveal"></div><div class="actions" id="acts"></div>`;
+  $("xCard").onclick=closeCard; document.querySelectorAll(".vbtn").forEach(b=>b.onclick=()=>pick(b.dataset.v));
   $("ovCard").classList.add("open");
-  startTimer();
+  if(played) showReveal(played,true); else { drawActs(); startTimer(); }
 }
-function setMode(m){
-  if(cur.locked) return;
-  cur.mode = m;
-  $("tPaste").classList.toggle("on", m==="pegar");
-  $("tBuild").classList.toggle("on", m==="constructor");
-  drawEditor(); analyze();
+function pick(v){ if(cur.done) return; cur.choice=v; document.querySelectorAll(".vbtn").forEach(b=>b.classList.toggle("sel",b.dataset.v===v)); drawActs(); }
+function drawActs(){ $("acts").innerHTML=`<button class="go" id="bRev" ${cur.choice?"":"disabled"}>Revelar recomendación</button>`; $("bRev").onclick=reveal; }
+function reveal(){
+  stopTimer(); cur.done=true; const t=SIT[cur.i]; const pts=score(cur.choice,t.v);
+  document.querySelectorAll(".vbtn").forEach(b=>b.disabled=true);
+  const rec={sit:cur.i,player:cur.practice?"Práctica":S.players[S.turn].name,choice:cur.choice,pts,time:new Date()};
+  if(!cur.practice){ S.players[S.turn].pts+=pts; S.played[cur.i]=rec; S.log.push(rec); }
+  showReveal(rec,false);
 }
-function drawEditor(){
-  const e = $("editor");
-  if(cur.mode === "pegar"){
-    e.innerHTML = `<textarea id="ta" rows="11" placeholder="Pegue aquí el prompt completo del equipo…">${esc(cur.text)}</textarea>`;
-    $("ta").oninput = ev => { cur.text = ev.target.value; analyze(); };
-  } else {
-    e.innerHTML = PIECES.map(p=>`<div class="field"><label for="f_${p.k}">${p.n} <i>· ${p.hint}</i></label><textarea id="f_${p.k}" rows="2">${esc(cur.fields[p.k]||"")}</textarea></div>`).join("")
-      + `<button class="ghost" id="bCopy">Copiar prompt armado</button>`;
-    PIECES.forEach(p=> $("f_"+p.k).oninput = ev => { cur.fields[p.k] = ev.target.value; analyze(); });
-    $("bCopy").onclick = copyPrompt;
-  }
-  if(cur.locked) e.querySelectorAll("textarea").forEach(t=> t.disabled = true);
+function showReveal(rec,already){
+  const t=SIT[cur.i]; const cls=rec.pts===3?"ok":rec.pts===1?"part":"no";
+  const head=rec.pts===3?"¡Decisión alineada con la recomendación!":rec.pts===1?"Cerca: la recomendación es la opción vecina.":"La recomendación es la opuesta.";
+  $("reveal").innerHTML=`<div class="reveal ${cls}"><h4>${head} ${rec.player!=="Práctica"?`+${rec.pts} punto${rec.pts===1?"":"s"}`:""}</h4>
+   <div><b>Recomendación:</b> <span class="badge b-${t.v}">${LV[t.v].n}</span> · <b>Decisión:</b> ${LV[rec.choice].n}</div>
+   <p style="margin:10px 0 4px">${t.exp}</p><p class="muted" style="margin:0"><b>Regla sugerida para la guía:</b> ${t.rule}</p></div>`;
+  if(already){ document.querySelectorAll(".vbtn").forEach(b=>{b.disabled=true;b.classList.toggle("sel",b.dataset.v===rec.choice)}); $("acts").innerHTML=`<button class="ghost" id="bc">Cerrar</button>`; $("bc").onclick=closeCard; return; }
+  $("acts").innerHTML=`<button class="go" id="bNext">${cur.practice?"Cerrar":"Siguiente turno"}</button>`;
+  $("bNext").onclick=()=>{ if(!cur.practice) S.turn=(S.turn+1)%S.players.length; closeCard(); if(S.active&&Object.keys(S.played).length===SIT.length) finish(); };
 }
-function assembled(){
-  if(cur.mode === "pegar") return cur.text;
-  return PIECES.map(p=> (cur.fields[p.k]||"").trim()).filter(Boolean).join("\n");
-}
-function copyPrompt(){
-  const txt = assembled();
-  try { navigator.clipboard.writeText(txt).then(()=>toast("Prompt copiado"), ()=>toast("No se pudo copiar; selecciónelo manualmente")); }
-  catch(e){ toast("No se pudo copiar; selecciónelo manualmente"); }
-}
-function analyze(){
-  const r = RETOS[cur.i];
-  const full = norm(assembled());
-  const pieces = PIECES.map(p => cur.mode === "constructor" ? (cur.fields[p.k]||"").trim().length >= 12 : p.re.test(full));
-  const reqs = r.req.map(q => q[1].test(full));
-  const pScore = pieces.filter(Boolean).length + reqs.filter(Boolean).length;
-  cur.pieces = pieces; cur.reqs = reqs; cur.pScore = pScore;
-  $("ledP").innerHTML = PIECES.map((p,i)=>`<div class="ind ${pieces[i]?"on":""}"><span class="led"></span><span class="t">${i+1}. ${p.n}</span></div>`).join("");
-  $("ledR").innerHTML = r.req.map((q,i)=>`<div class="ind req ${reqs[i]?"on":""}"><span class="led"></span><span class="t">${q[0]}</span></div>`).join("");
-  $("pScore").textContent = pScore;
-  $("lvl").textContent = !full.trim() ? "" : pScore >= 8 ? "Nivel ejecutivo" : pScore >= 5 ? "Nivel profesional" : "Nivel básico";
-  $("lvl").style.color = pScore >= 8 ? "#7FE3F2" : pScore >= 5 ? "#F5A623" : "#FF8A8D";
-  if(!cur.locked) drawActs();
-}
-function drawActs(){
-  if(cur.locked) return;
-  const ok = assembled().trim().length > 0;
-  $("acts").innerHTML = `<button class="go" id="bLock" ${ok ? "" : "disabled"}>Calificar prompt</button>`;
-  $("bLock").onclick = lockPrompt;
-}
-function lockPrompt(){
-  stopTimer();
-  cur.locked = true;
-  document.querySelectorAll("#editor textarea").forEach(t=> t.disabled = true);
-  $("tPaste").disabled = true; $("tBuild").disabled = true;
-  $("voteStep").innerHTML = `<div class="box ask" style="margin-top:14px"><div class="lbl">Paso 2 · El equipo muestra la respuesta de su IA. ¿Está lista para enviarse?</div>
-    <div class="votes">${VOTES.map(v=>`<button class="vote v${v[0]}" data-v="${v[0]}">${v[1]} · ${v[0]}</button>`).join("")}</div></div>`;
-  document.querySelectorAll(".vote").forEach(b=> b.onclick = ()=>{
-    if(cur.vote !== null && cur.done) return;
-    cur.vote = +b.dataset.v;
-    document.querySelectorAll(".vote").forEach(x=> x.classList.toggle("sel", x===b));
-    $("acts").innerHTML = `<button class="go" id="bReg">Registrar puntaje</button>`;
-    $("bReg").onclick = register;
-  });
-  $("acts").innerHTML = "";
-}
-function register(){
-  cur.done = true;
-  document.querySelectorAll(".vote").forEach(b=> b.disabled = true);
-  const total = cur.pScore + cur.vote;
-  const r = RETOS[cur.i];
-  const who = cur.practice ? "Práctica" : S.players[S.turn].name;
-  const missing = PIECES.filter((p,i)=>!cur.pieces[i]).map(p=>p.n);
-  const missR = r.req.filter((q,i)=>!cur.reqs[i]).map(q=>q[0]);
-  if(!cur.practice){
-    S.players[S.turn].pts += total;
-    const st = S.stats[cur.i] || {n:0,best:-1,bestBy:""};
-    st.n++; if(total > st.best){ st.best = total; st.bestBy = who; }
-    S.stats[cur.i] = st;
-    S.log.push({reto:cur.i, player:who, pieces:cur.pieces.filter(Boolean).length, reqs:cur.reqs.filter(Boolean).length, vote:cur.vote, total, time:new Date()});
-  }
-  $("voteStep").insertAdjacentHTML("beforeend", `<div class="result"><h4>${total >= 10 ? "¡Prompt de nivel ejecutivo!" : total >= 7 ? "Buen trabajo." : "Hay margen de mejora."} ${cur.practice ? "" : `+${total} puntos`}</h4>
-    <div>Piezas: ${cur.pieces.filter(Boolean).length}/6 · Requisitos: ${cur.reqs.filter(Boolean).length}/3 · Calidad del resultado: ${cur.vote}/3 · <b>Total: ${total}/12</b></div>
-    ${missing.length || missR.length ? `<p style="margin:8px 0 0"><b>Para la próxima versión, agregue:</b> ${[...missing, ...missR].join(" · ")}</p>` : `<p style="margin:8px 0 0">Su prompt incluye todas las piezas y requisitos. Guárdelo como plantilla.</p>`}</div>`);
-  $("acts").innerHTML = `<button class="go" id="bNext">${cur.practice ? "Cerrar" : "Siguiente turno"}</button>`;
-  $("bNext").onclick = ()=>{
-    if(!cur.practice) S.turn = (S.turn + 1) % S.players.length;
-    closeCard();
-  };
-}
-function closeCard(){ stopTimer(); $("ovCard").classList.remove("open"); cur = null; render(); }
-function startTimer(){
-  if(!S.timer || !$("tm")) return;
-  tLeft = S.timer; paintTimer();
-  tInt = setInterval(()=>{ tLeft = Math.max(0, tLeft-1); paintTimer(); if(!tLeft) stopTimer(); }, 1000);
-}
-function paintTimer(){ const t = $("tm"); if(!t) return; const m = Math.floor(tLeft/60), s = tLeft%60; t.textContent = `${m}:${String(s).padStart(2,"0")}`; t.classList.toggle("low", tLeft <= 20); }
-function stopTimer(){ if(tInt){ clearInterval(tInt); tInt = null; } }
-
-// ---------- Generic modals ----------
-function openGen(html){ $("genModal").innerHTML = html; $("ovGen").classList.add("open"); }
+function closeCard(){ stopTimer(); $("ovCard").classList.remove("open"); cur=null; render(); }
+function startTimer(){ if(!S.timer||!$("tm")) return; tLeft=S.timer; paint(); tInt=setInterval(()=>{tLeft=Math.max(0,tLeft-1);paint();if(!tLeft)stopTimer();},1000); }
+function paint(){ const t=$("tm"); if(!t) return; t.textContent=`${Math.floor(tLeft/60)}:${String(tLeft%60).padStart(2,"0")}`; t.classList.toggle("low",tLeft<=15); }
+function stopTimer(){ if(tInt){clearInterval(tInt);tInt=null;} }
+function openGen(h){ $("genModal").innerHTML=h; $("ovGen").classList.add("open"); }
 function closeGen(){ $("ovGen").classList.remove("open"); }
-
+function guideText(){
+  const L=[]; const d=new Date();
+  L.push("GUÍA DE USO DE IA DEL EQUIPO · BORRADOR");
+  L.push(`Generada en el Comité de IA · ${d.toLocaleDateString("es-CL")}`); L.push("");
+  L.push("PRINCIPIOS");
+  ["Usamos solo herramientas de IA autorizadas por la empresa.","Antes de ingresar información, aplicamos el semáforo de datos.","Una persona revisa todo lo que sale hacia clientes, el directorio o terceros.","Declaramos el apoyo de IA cuando corresponde.","Cada asistente o agente tiene un dueño responsable.","La IA propone; las personas deciden y responden."].forEach((p,i)=>L.push(`${i+1}. ${p}`));
+  L.push("");
+  CATS.forEach((c,ci)=>{
+    const items=SIT.map((s,i)=>({s,i})).filter(o=>o.s.cat===ci);
+    L.push(c.toUpperCase());
+    items.forEach(({s,i})=>{
+      const p=S.played[i];
+      const dec=p?LV[p.choice].n:"Pendiente de decidir";
+      L.push(`- ${s.t}: ${dec}.`);
+      L.push(`  Regla: ${s.rule}`);
+      if(p && p.choice!==s.v) L.push(`  Nota: el comité decidió "${LV[p.choice].n}"; la recomendación era "${LV[s.v].n}". Revisar antes de aprobar.`);
+    });
+    L.push("");
+  });
+  L.push("Este borrador debe revisarse con las áreas de TI, Legal y Recursos Humanos antes de su aprobación.");
+  return L.join("\n");
+}
+function showGuide(){
+  const txt=guideText();
+  openGen(`<div class="mhead"><h3>Guía del equipo (borrador)</h3><button class="x" onclick="closeGen()">Cerrar</button></div>
+  <p class="muted">Se construye con las decisiones de la partida. Las situaciones sin decidir aparecen como pendientes.</p>
+  <pre id="gtxt" style="white-space:pre-wrap;background:var(--ice);border-radius:10px;padding:12px;max-height:55vh;overflow:auto;font:14px/1.5 'Segoe UI',Calibri,sans-serif">${esc(txt)}</pre>
+  <div class="actions"><button class="ghost" id="bCopy">Copiar</button><button class="go" id="bDown">Descargar (.txt)</button></div>`);
+  $("bCopy").onclick=()=>{ try{ navigator.clipboard.writeText(txt).then(()=>{$("bCopy").textContent="Copiado";},()=>{$("bCopy").textContent="Seleccione y copie el texto";}); }catch(e){ $("bCopy").textContent="Seleccione y copie el texto"; } };
+  $("bDown").onclick=()=>{ const a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([txt],{type:"text/plain;charset=utf-8"})); a.download="guia_ia_equipo.txt"; document.body.appendChild(a); a.click(); a.remove(); };
+}
 function showRules(){
-  openGen(`<div class="mhead"><h3>Reglas del laboratorio</h3><button class="x" onclick="closeGen()">Cerrar</button></div>
-  <div class="rules">
-    <p>Es martes en <b>Nexo Austral</b> y el día trae seis retos de comunicación. Su misión es escribir, para cada uno, el mejor prompt posible y demostrar que el resultado de la IA está listo para usarse.</p>
-    <h4>Preparación</h4>
-    <ul><li>Pulse <b>Nueva partida</b>, elija si juegan de forma individual o por equipos y registre los nombres.</li>
-    <li>Elija el tiempo por reto: 2, 3 o 5 minutos, o sin tiempo.</li></ul>
-    <h4>En cada turno</h4>
-    <ul><li>El jugador o equipo en turno elige un reto del tablero y lee la situación.</li>
-    <li>Escribe su prompt en su asistente de IA antes de que termine el tiempo y lo pega en el chat.</li>
-    <li>El prompt se pega en el laboratorio (pestaña <b>Pegar prompt</b>) o se arma pieza por pieza en el <b>Constructor</b>.</li>
-    <li>Las luces muestran en tiempo real qué piezas y requisitos del reto se detectaron.</li>
-    <li>Al pulsar <b>Calificar prompt</b>, el jugador muestra la respuesta que le dio su IA y el grupo vota si está lista para enviarse.</li>
-    <li>Se registra el puntaje y el turno pasa al siguiente jugador.</li></ul>
-    <h4>Puntaje (máximo 12 por reto)</h4>
-    <ul><li><b>Piezas (0–6):</b> contexto, objetivo, insumos, restricciones, formato y criterios.</li>
-    <li><b>Requisitos del reto (0–3):</b> tres elementos que ese reto exige, como el tono, la trazabilidad o un límite.</li>
-    <li><b>Calidad del resultado (0–3):</b> lista para enviar (3), ajustes menores (2), muchos ajustes (1), no sirve (0).</li></ul>
-    <p class="muted">El laboratorio detecta las piezas por las palabras que usa el prompt: es una guía, no un juez infalible. Si el grupo considera que una pieza está presente aunque no se encendió, reescríbala con más claridad.</p>
-    <h4>Fin de la partida</h4>
-    <ul><li>Los retos se pueden jugar más de una vez. La partida termina al pulsar <b>Terminar partida</b>; gana quien acumule más puntos.</li>
-    <li>La <b>Bitácora</b> registra cada jugada.</li>
-    <li>El laboratorio funciona solo en esta pantalla: no envía los prompts a ningún servicio.</li></ul>
-  </div>`);
+  openGen(`<div class="mhead"><h3>Reglas del juego</h3><button class="x" onclick="closeGen()">Cerrar</button></div><div class="rules">
+  <p>Ustedes son el comité que define cómo usa la IA el equipo de <b>Nexo Austral</b>. Hay 12 situaciones reales; para cada una deben decidir si el uso es <b>Permitido</b>, <b>Con condiciones</b> o <b>No permitido</b>.</p>
+  <h4>Preparación</h4><ul><li>Pulse <b>Nueva partida</b>, elija si juegan de forma individual o por equipos y registre los nombres.</li><li>Puede activar un cronómetro por situación (60, 90 o 120 segundos).</li></ul>
+  <h4>En cada turno</h4><ul><li>El jugador en turno elige una situación y la lee en voz alta.</li><li>Decide y argumenta: ¿qué riesgo hay?, ¿qué datos están en juego?, ¿quién revisa?, ¿quién responde?</li><li>Los demás pueden objetar antes de revelar.</li><li>Se revela la recomendación, su explicación y la regla sugerida para la guía.</li></ul>
+  <h4>Puntaje</h4><ul><li><b>3 puntos</b> si la decisión coincide con la recomendación.</li><li><b>1 punto</b> si elige la opción vecina (por ejemplo, Con condiciones en vez de No permitido).</li><li><b>0 puntos</b> si elige la opción opuesta.</li></ul>
+  <h4>La guía del equipo</h4><ul><li>Con <b>Guía del equipo</b> verá un borrador de reglas con las decisiones de la partida, ordenado en seis temas: herramientas autorizadas, semáforo de datos, validación humana, transparencia, registro de asistentes y agentes, y responsabilidad.</li><li>Puede copiarlo o descargarlo para completarlo con su equipo.</li></ul>
+  <h4>Fin de la partida</h4><ul><li>Termina al decidir las 12 situaciones o al pulsar <b>Terminar partida</b>. Gana quien sume más puntos.</li></ul></div>`);
 }
 function showLog(){
-  const rows = S.log.map((r,i)=>`<tr><td>${i+1}</td><td>${r.time.toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"})}</td><td>${esc(r.player)}</td><td>${r.reto+1}. ${RETOS[r.reto].t}</td><td>${r.pieces}/6</td><td>${r.reqs}/3</td><td>${r.vote}/3</td><td><b>${r.total}</b></td></tr>`).join("");
+  const rows=S.log.map((r,i)=>`<tr><td>${i+1}</td><td>${r.time.toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"})}</td><td>${esc(r.player)}</td><td>${r.sit+1}. ${SIT[r.sit].t}</td><td>${LV[r.choice].n}</td><td>${LV[SIT[r.sit].v].n}</td><td><b>+${r.pts}</b></td></tr>`).join("");
   openGen(`<div class="mhead"><h3>Bitácora de la partida</h3><button class="x" onclick="closeGen()">Cerrar</button></div>
-  ${S.log.length ? `<div style="overflow-x:auto"><table class="log"><tr><th>#</th><th>Hora</th><th>Jugador</th><th>Reto</th><th>Piezas</th><th>Requisitos</th><th>Calidad</th><th>Total</th></tr>${rows}</table></div>` : `<p class="muted">Aún no hay jugadas registradas.</p>`}`);
+  ${S.log.length?`<div style="overflow-x:auto"><table class="log"><tr><th>#</th><th>Hora</th><th>Jugador</th><th>Situación</th><th>Decisión</th><th>Recomendación</th><th>Pts</th></tr>${rows}</table></div>`:`<p class="muted">Aún no hay jugadas registradas.</p>`}`);
 }
-let draft = null;
-function showNew(){ draft = {mode:"equipos", names:[], timer:180}; drawNew(); }
+let draft=null;
+function showNew(){ draft={mode:"individual",names:[],timer:90}; drawNew(); }
 function drawNew(){
-  const noun = draft.mode === "equipos" ? "equipo" : "jugador";
+  const noun=draft.mode==="equipos"?"equipo":"jugador";
   openGen(`<div class="mhead"><h3>Nueva partida</h3><button class="x" onclick="closeGen()">Cancelar</button></div>
-  <div class="form-row"><label>Modalidad</label><div class="seg">
-    <button class="${draft.mode==="individual"?"on":""}" onclick="draft.mode='individual';drawNew()">Individual</button>
-    <button class="${draft.mode==="equipos"?"on":""}" onclick="draft.mode='equipos';drawNew()">Por equipos</button></div></div>
-  <div class="form-row"><label for="nm">Nombre del ${noun}</label>
-    <div class="addrow"><input type="text" id="nm" maxlength="40" placeholder="${draft.mode==="equipos"?"Ej.: Sala 1":"Ej.: Carolina"}"><button class="go" id="addB">Agregar</button></div>
-    <div class="plist">${draft.names.map((n,i)=>`<span class="ptag">${esc(n)}<button onclick="draft.names.splice(${i},1);drawNew()" aria-label="Quitar">×</button></span>`).join("")}</div></div>
-  <div class="form-row"><label>Tiempo por reto</label><div class="seg">
-    ${[0,120,180,300].map(t=>`<button class="${draft.timer===t?"on":""}" onclick="draft.timer=${t};drawNew()">${t? (t/60)+" min":"Sin tiempo"}</button>`).join("")}</div></div>
-  <div class="actions"><button class="go" id="startB" ${draft.names.length ? "" : "disabled"}>Comenzar partida</button></div>`);
-  const inp = $("nm");
-  const add = ()=>{ const v = inp.value.trim(); if(v && draft.names.length < 30){ draft.names.push(v); drawNew(); setTimeout(()=> $("nm").focus(), 0); } };
-  $("addB").onclick = add;
-  inp.onkeydown = e => { if(e.key === "Enter") add(); };
-  inp.focus();
-  $("startB").onclick = ()=>{
-    S = freshState();
-    S.mode = draft.mode; S.timer = draft.timer; S.active = true;
-    S.players = draft.names.map(n=>({name:n, pts:0}));
-    closeGen(); render();
-  };
+  <div class="form-row"><label>Modalidad</label><div class="seg"><button class="${draft.mode==="individual"?"on":""}" onclick="draft.mode='individual';drawNew()">Individual</button><button class="${draft.mode==="equipos"?"on":""}" onclick="draft.mode='equipos';drawNew()">Por equipos</button></div></div>
+  <div class="form-row"><label for="nm">Nombre del ${noun}</label><div class="addrow"><input type="text" id="nm" maxlength="40" placeholder="${draft.mode==="equipos"?"Ej.: Sala 1":"Ej.: Carolina"}"><button class="go" id="addB">Agregar</button></div>
+  <div class="plist">${draft.names.map((n,i)=>`<span class="ptag">${esc(n)}<button onclick="draft.names.splice(${i},1);drawNew()" aria-label="Quitar">×</button></span>`).join("")}</div></div>
+  <div class="form-row"><label>Cronómetro por situación</label><div class="seg">${[0,60,90,120].map(t=>`<button class="${draft.timer===t?"on":""}" onclick="draft.timer=${t};drawNew()">${t?t+" s":"Sin tiempo"}</button>`).join("")}</div></div>
+  <div class="actions"><button class="go" id="startB" ${draft.names.length?"":"disabled"}>Comenzar partida</button></div>`);
+  const inp=$("nm"); const add=()=>{const v=inp.value.trim(); if(v&&draft.names.length<30){draft.names.push(v);drawNew();setTimeout(()=>$("nm").focus(),0);}};
+  $("addB").onclick=add; inp.onkeydown=e=>{if(e.key==="Enter")add();}; inp.focus();
+  $("startB").onclick=()=>{ S=freshState(); S.mode=draft.mode; S.timer=draft.timer; S.active=true; S.players=draft.names.map(n=>({name:n,pts:0})); closeGen(); render(); };
 }
 function confirmEnd(){
   if(!S.active){ openGen(`<div class="mhead"><h3>Terminar partida</h3><button class="x" onclick="closeGen()">Cerrar</button></div><p class="muted">No hay una partida en curso.</p>`); return; }
-  openGen(`<div class="mhead"><h3>¿Terminar la partida?</h3><button class="x" onclick="closeGen()">Cancelar</button></div>
-  <p>Se cerrará la partida y se mostrará la clasificación final. La bitácora se conserva.</p>
+  openGen(`<div class="mhead"><h3>¿Terminar la partida?</h3><button class="x" onclick="closeGen()">Cancelar</button></div><p>Se cerrará la partida y se mostrará la clasificación final. La bitácora y la guía se conservan.</p>
   <div class="actions"><button class="ghost" onclick="closeGen()">Seguir jugando</button><button class="go" onclick="finish()">Terminar y ver resultados</button></div>`);
 }
 function finish(){
-  S.active = false; S.ended = true; render();
-  const rank = [...S.players].sort((a,b)=> b.pts - a.pts);
+  S.active=false; S.ended=true; render();
+  const rank=[...S.players].sort((a,b)=>b.pts-a.pts);
   openGen(`<div class="mhead"><h3>Clasificación final</h3><button class="x" onclick="closeGen()">Cerrar</button></div>
-  <p class="muted">Jugadas registradas: ${S.log.length}</p>
+  <p class="muted">Situaciones decididas: ${Object.keys(S.played).length} de ${SIT.length}</p>
   <div class="podium">${rank.map((p,i)=>`<div><span>${i+1}. ${esc(p.name)}</span><span>${p.pts} pts</span></div>`).join("")}</div>
-  <p style="margin-top:16px"><b>Para conversar:</b> ¿qué pieza faltó con más frecuencia? ¿Qué prompt de hoy guardaría como plantilla?</p>
-  <div class="actions"><button class="ghost" onclick="showLog()">Ver bitácora</button></div>`);
+  <p style="margin-top:16px"><b>Para conversar:</b> ¿qué regla aplicaría primero en su equipo? ¿Cuál necesita aprobación de TI, Legal o Recursos Humanos?</p>
+  <div class="actions"><button class="ghost" onclick="showLog()">Ver bitácora</button><button class="go" onclick="showGuide()">Ver guía del equipo</button></div>`);
 }
-
-$("bRules").onclick = showRules;
-$("bLog").onclick = showLog;
-$("bNew").onclick = showNew;
-$("bEnd").onclick = confirmEnd;
-document.addEventListener("keydown", e => { if(e.key === "Escape"){ if($("ovGen").classList.contains("open")) closeGen(); else if($("ovCard").classList.contains("open")) closeCard(); } });
+$("bRules").onclick=showRules; $("bLog").onclick=showLog; $("bGuide").onclick=showGuide; $("bNew").onclick=showNew; $("bEnd").onclick=confirmEnd;
+document.addEventListener("keydown",e=>{ if(e.key==="Escape"){ if($("ovGen").classList.contains("open")) closeGen(); else if($("ovCard").classList.contains("open")) closeCard(); } });
 render();
 </script>
 </body>
